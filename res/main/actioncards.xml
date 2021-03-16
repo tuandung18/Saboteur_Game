@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cards>
+	<card type="broken_tool" name="broken_lantern" count="3">
+		<tool type="lantern"/>
+	</card>
+	<card type="broken_tool" name="broken_mine_cart" count="3">
+		<tool type="mine_cart"/>
+	</card>
+	<card type="broken_tool" name="broken_pick" count="3">
+		<tool type="pick"/>
+	</card>
+	
+	<card type="fixed_tool" name="fixed_lantern" count="2">
+		<tool type="lantern"/>
+	</card>
+	<card type="fixed_tool" name="fixed_mine_cart" count="2">
+		<tool type="mine_cart"/>
+	</card>
+	<card type="fixed_tool" name="fixed_pick" count="2">
+		<tool type="pick"/>
+	</card>
+	
+	<card type="fixed_tool" name="fixed_pick_lantern" count="1">
+		<tool type="pick"/>
+		<tool type="lantern"/>
+	</card>
+	<card type="fixed_tool" name="fixed_pick_mine_cart" count="1">
+		<tool type="pick"/>
+		<tool type="mine_cart"/>
+	</card>
+	<card type="fixed_tool" name="fixed_lantern_mine_cart" count="1">
+		<tool type="lantern"/>
+		<tool type="mine_cart"/>
+	</card>
+	
+	<card type="rockfall" name="rockfall" count="3"/>
+	<card type="map" name="map" count="6"/>
+</cards>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="Saboteur" default="full">
+	
+	<!-- ################ -->
+	<!-- ## Properties ## -->
+	<!-- ################ -->
+	
+	<property name="project.name" value="Saboteur"/>
+	<property name="project.name.short" value="Saboteur"/>
+	
+	<property name="main.src" location="src/main"/>
+	<property name="main.res" location="res/main"/>
+	<property name="main.bin" location="bin/main"/>
+	<property name="bin" location="bin"/>
+	
+	<property name="dist" location="dist"/>
+	
+	
+	<!-- ########### -->
+	<!-- ## Paths ## -->
+	<!-- ########### -->
+	
+	<path id="classpath">
+		<!-- no libraries -->
+	</path>
+	
+	
+	<!-- ############# -->
+	<!-- ## Targets ## -->
+	<!-- ############# -->
+	
+	<!-- clean doc and bin directories -->
+	<target name="clean">
+		<delete dir="${main.bin}"/>
+		<delete dir="${test.bin}"/>
+		<delete dir="${bin}"/>
+	</target>
+	
+	<!-- build main project -->
+	<target name="build" depends="clean">
+		<mkdir dir="${bin}"/>
+		<mkdir dir="${main.bin}"/>
+		<javac srcdir="${main.src}" destdir="${main.bin}" includeantruntime="false" classpathref="classpath" encoding="UTF-8"/>
+		<copy todir="${main.bin}">
+			<fileset dir="${main.res}" excludes="**/*.java"/>
+		</copy>
+	</target>
+	
+	<!-- generate executable jar file -->
+	<target name="distribute">
+		<!-- generate time stamp -->
+		<tstamp>
+			<format property="TSTAMP" pattern="yyyy-MM-dd" locale="de,DE" />
+		</tstamp>
+		<!-- create jar -->
+		<jar destfile="${dist}/${project.name.short}.jar" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="fop.Saboteur"/>
+				<attribute name="Class-Path" value="."/>
+			</manifest>
+			<fileset dir="${main.bin}"/>
+		</jar>
+		<!-- copy jar to version specific jar -->
+		<copy todir="${dist}">
+			<fileset dir="${dist}"/>
+			<globmapper from="${project.name.short}.jar" to="${project.name.short}-${TSTAMP}.jar"/>
+		</copy>
+	</target>
+	
+	<!-- do everything -->
+	<target name="full" depends="clean,build,distribute"/>
+	
+</project>
