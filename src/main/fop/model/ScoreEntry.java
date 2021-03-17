@@ -1,7 +1,9 @@
 package fop.model;
 
 import java.io.PrintWriter;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 /**
  * 
@@ -10,7 +12,7 @@ import java.time.LocalDateTime;
  *
  */
 public class ScoreEntry implements Comparable<ScoreEntry> {
-	
+
 	protected String name;
 	protected LocalDateTime dateTime;
 	protected int score;
@@ -39,7 +41,29 @@ public class ScoreEntry implements Comparable<ScoreEntry> {
 	 */
 	public static ScoreEntry read(String line) {
 		// TODO Aufgabe 4.2.1
-		return null;
+		String name;
+		LocalDateTime dateTime;
+		int score;
+		try{
+			name = line.substring(0,line.indexOf(";"));
+		}
+		catch (StringIndexOutOfBoundsException s){
+			return null;
+		}
+		try{
+			dateTime = LocalDateTime.parse(line.substring(line.indexOf(";")+1, line.lastIndexOf(";")));
+		}
+		catch (StringIndexOutOfBoundsException | DateTimeParseException sd){
+			return null;
+		}
+		try{
+			score = Integer.parseInt(line.substring(line.lastIndexOf(";")+1));
+		}
+		catch (StringIndexOutOfBoundsException | NumberFormatException sn){
+			return null;
+		}
+
+		return new ScoreEntry(name,dateTime,score);
 	}
 	
 	/**

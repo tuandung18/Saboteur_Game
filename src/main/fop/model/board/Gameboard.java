@@ -58,16 +58,20 @@ public class Gameboard {
 	public void placeCard(int x, int y, PathCard card) {
 		// TODO Aufgabe 4.1.4
 		
-		// stehen lassen
+		// put the new card into the board
 		board.put(Position.of(x,y),card);
+		//put all nodes from the card's graph to the board's graph
 		for(CardAnchor anchor : card.getGraph().vertices())
 			graph.addVertex(BoardAnchor.of(x,y,anchor));
-
+		//put all edges from the card's graph to the board's graph
 		for(Edge<CardAnchor> edge : card.getGraph().edges())
 			graph.addEdge(BoardAnchor.of(x,y,edge.x()),BoardAnchor.of(x,y,edge.y()));
-		for(CardAnchor newAnchor : card.getGraph().vertices())
-			card.getGraph().addEdge(newAnchor.getOppositeAnchor())
-
+		//connect edges from nodes within the card with nodes from board's graph around them
+		Position pos = Position.of(x,y);
+		for(CardAnchor newAnchor : card.getGraph().vertices()) {
+			Position nextPos = newAnchor.getAdjacentPosition(pos);
+			graph.addEdge(BoardAnchor.of(x, y, newAnchor), BoardAnchor.of(nextPos, newAnchor.getOppositeAnchor()));
+		}
 
 		// check for goal cards
 		checkGoalCards();
@@ -103,10 +107,13 @@ public class Gameboard {
 	 */
 	public PathCard removeCard(int x, int y) {
 		// TODO Aufgabe 4.1.5
-		PathCard toRemove = board.get(Position.of(x,y));
+		PathCard toRemoveCard = board.get(Position.of(x,y));
 		board.remove(Position.of(x,y));
-
-		return toRemove;
+		for(BoardAnchor boardAnchor : graph.vertices()){
+			if((boardAnchor.x()==x) && (boardAnchor.y()==y))
+				graph.removeVertex(BoardAnchor.of(x,y,boardAnchor.anchor()));
+		}
+		return toRemoveCard;
 	}
 	
 	
