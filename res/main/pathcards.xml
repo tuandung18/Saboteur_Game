@@ -71,7 +71,7 @@
 
 
 	<!-- Aufgabe 4.1.3-->
-	<card name="curve_double_down">
+	<card name="curve_double_down" count="1">
 		<edge start="left" end="bottom"/>
 		<edge start="top" end="right"/>
 	</card>
@@ -81,7 +81,7 @@
 		<edge start="left" end="top"/>
 	</card>
 
-	<card name="line_vert_dead_two">
+	<card name="line_vert_dead_two" count="1">
 		<node value="left"/>
 		<node value="right"/>
 		<edge start="top" end="bottom"/>

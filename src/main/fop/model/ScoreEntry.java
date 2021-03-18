@@ -41,29 +41,18 @@ public class ScoreEntry implements Comparable<ScoreEntry> {
 	 */
 	public static ScoreEntry read(String line) {
 		// TODO Aufgabe 4.2.1
-		String name;
-		LocalDateTime dateTime;
-		int score;
-		try{
-			name = line.substring(0,line.indexOf(";"));
-		}
-		catch (StringIndexOutOfBoundsException s){
+		String[] splitLine = line.split(";");
+		if (splitLine.length != 3)
 			return null;
-		}
 		try{
-			dateTime = LocalDateTime.parse(line.substring(line.indexOf(";")+1, line.lastIndexOf(";")));
+			LocalDateTime dateTime = LocalDateTime.parse(splitLine[1]);
+			Integer score = Integer.parseInt(splitLine[2]);
+			return new ScoreEntry (splitLine[0], dateTime, score);
 		}
-		catch (StringIndexOutOfBoundsException | DateTimeParseException sd){
-			return null;
-		}
-		try{
-			score = Integer.parseInt(line.substring(line.lastIndexOf(";")+1));
-		}
-		catch (StringIndexOutOfBoundsException | NumberFormatException sn){
+		catch (DateTimeParseException | NumberFormatException exp) {
 			return null;
 		}
 
-		return new ScoreEntry(name,dateTime,score);
 	}
 	
 	/**
@@ -73,7 +62,9 @@ public class ScoreEntry implements Comparable<ScoreEntry> {
 	 */
 	public void write(PrintWriter printWriter) {
 		// TODO Aufgabe 4.2.1
+		printWriter.println(this.name+ ";" + this.dateTime.toString() + ";" + Integer.toString(this.score));
 	}
+
 	
 	// get //
 	
