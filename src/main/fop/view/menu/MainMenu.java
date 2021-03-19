@@ -64,7 +64,7 @@ public final class MainMenu extends MenuView {
 		
 		JButton highscoreButton = createButton("Punkte");
 		// TODO Aufgabe 4.3.1
-		// highscoreButton.addActionListener(evt -> getWindow().setView(new HighscoreView(getWindow())));
+		highscoreButton.addActionListener(evt -> getWindow().setView(new HighscoreView(getWindow())));
 		buttonPanel.add(highscoreButton, gbc);
 		gbc.gridy++;
 		

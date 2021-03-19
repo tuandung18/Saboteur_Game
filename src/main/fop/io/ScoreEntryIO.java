@@ -31,12 +31,21 @@ public final class ScoreEntryIO {
 	public static List<ScoreEntry> loadScoreEntries() {
 		// TODO Aufgabe 4.2.2
 		List <ScoreEntry> loadedScoreEntries  = new ArrayList<>();
+		FileReader fileReader;
+		try {
+			fileReader = new FileReader(PATH);
+		} catch (FileNotFoundException exp) {
+			return loadedScoreEntries;
+		}
 		try{
-			BufferedReader reader = new BufferedReader(new FileReader(PATH));
+			BufferedReader reader = new BufferedReader(fileReader);
 			String toBeReadLine= reader.readLine();
 			while (toBeReadLine!=null){
-				if(ScoreEntry.read(toBeReadLine) == null)
+				if(ScoreEntry.read(toBeReadLine) == null){
+					loadedScoreEntries.clear();
 					return loadedScoreEntries;
+				}
+
 				else {
 					loadedScoreEntries.add(ScoreEntry.read(toBeReadLine));
 					toBeReadLine=reader.readLine();
@@ -44,8 +53,9 @@ public final class ScoreEntryIO {
 			}
 			reader.close();
 		}
-		catch (IOException e){
-			return new ArrayList<ScoreEntry>();
+		catch (IOException exp){
+			loadedScoreEntries.clear();
+			return loadedScoreEntries;
 		}
 		return loadedScoreEntries;
 	}
@@ -58,16 +68,20 @@ public final class ScoreEntryIO {
 	public static void writeScoreEntries(List<ScoreEntry> scoreEntries) {
 		// TODO Aufgabe 4.2.2
 		PrintWriter printed;
+		FileOutputStream fileOutputStream = null;
 		try {
-			printed = new PrintWriter(new FileOutputStream(PATH));
-			for(ScoreEntry scoreEntry: scoreEntries){
-				scoreEntry.write(printed);
-			}
-			printed.close();
+			fileOutputStream = new FileOutputStream(PATH);
 		}
-		catch (FileNotFoundException exp){
-			exp.printStackTrace();
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		printed = new PrintWriter(fileOutputStream);
+		for(ScoreEntry scoreEntry: scoreEntries){
+			scoreEntry.write(printed);
+		}
+		printed.close();
 	}
 	
 	/**
@@ -78,25 +92,31 @@ public final class ScoreEntryIO {
 	 */
 	public static void addScoreEntry(ScoreEntry scoreEntry) {
 		// TODO Aufgabe 4.2.3
+		// a copy of the  high scores list
 		List<ScoreEntry> listOfHighScores = loadScoreEntries();
+		// if list is empty just add the new scoreEntry to the list and write it
 		if(listOfHighScores.isEmpty()){
 			listOfHighScores.add(scoreEntry);
 			writeScoreEntries(listOfHighScores);
 		}
-
+		// create a list to save the sorted high scores which is greater
+		// or equal than the to-be-added score
 		List<ScoreEntry> sortedList = new ArrayList<>();
-		int index = 0;
+		// next index in list of high scores, used to add scores smaller than the to-be-added score
+		int nextIndex = 0;
 		for(ScoreEntry highScore : listOfHighScores){
 			if(highScore.compareTo(scoreEntry)>=0){
 				sortedList.add(highScore);
-				index++;
+				nextIndex++;
+
 			}
 			else break;
 		}
 
-
+		// add the new high score to the sorted list
 		sortedList.add(scoreEntry);
-		for(int i = index; i<listOfHighScores.size();i++){
+		// continue to add from the next index from list of high scores
+		for(int i = nextIndex; i<listOfHighScores.size();i++){
 			sortedList.add(listOfHighScores.get(i));
 		}
 
