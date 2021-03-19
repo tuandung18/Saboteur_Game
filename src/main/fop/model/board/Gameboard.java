@@ -1,5 +1,6 @@
 package fop.model.board;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -74,7 +75,8 @@ public class Gameboard {
 				if (card.getGraph().hasEdge(cardAnchor1,cardAnchor2)) {
 					boardAnchor2 = BoardAnchor.of(pos, cardAnchor2);
 					graph.addEdge(boardAnchor1, boardAnchor2);
-				} else continue;
+				} else {
+				}
 			}
 			//check if there is no card next to the processing cardAnchor 1
 			if(isPositionEmpty(nextPos.x(), nextPos.y()))
@@ -125,12 +127,12 @@ public class Gameboard {
 		Position pos = new Position(x,y);
 		PathCard toRemoveCard = board.get(pos);
 		board.remove(pos);
-		for(CardAnchor cardAnchor : CardAnchor.values()) {
-			BoardAnchor boardAnchor = BoardAnchor.of(x, y, cardAnchor);
-			if(graph.hasVertex(boardAnchor))
+		Arrays.stream(CardAnchor.values()).map(cardAnchor -> BoardAnchor.of(x, y, cardAnchor)).forEach(boardAnchor -> {
+			if (graph.hasVertex(boardAnchor))
 				graph.removeVertex(boardAnchor);
-			else continue;
-		}
+			else {
+			}
+		});
 		return toRemoveCard;
 	}
 	
@@ -157,10 +159,7 @@ public class Gameboard {
 	private boolean isPositionEmpty(int x, int y) {
 		// TODO Aufgabe 4.1.6
 		Position pos = new Position(x, y);
-		if(board.containsKey(pos)) {
-			return false;
-		}
-		return true;
+		return !board.containsKey(pos);
 	}
 	
 	/**
@@ -207,13 +206,17 @@ public class Gameboard {
 	 */
 	private boolean doesCardMatchItsNeighbors(int x, int y, PathCard card) {
 		// TODO Aufgabe 4.1.8
-		Position pos = Position.of(x, y);
-		for (CardAnchor ca : card.getGraph().vertices()) {
-			Position p = ca.getAdjacentPosition(pos);
-			if (!board.get(p).getGraph().vertices().contains(ca.getOppositeAnchor())) {
-				return false;
+		Position pos = new Position(x,y);
+		for (CardAnchor ca : CardAnchor.values()) {
+			Position nextpos = ca.getAdjacentPosition(pos);
+			// skip if no card or goal card is in next position
+			if (!isPositionEmpty(nextpos.x(), nextpos.y()) && !board.get(nextpos).isGoalCard()) {
+				if ((card.getGraph().hasVertex(ca) || !graph.hasVertex(BoardAnchor.of(nextpos, ca.getOppositeAnchor()))) && (!card.getGraph().hasVertex(ca) || graph.hasVertex(BoardAnchor.of(nextpos, ca.getOppositeAnchor()))))
+					return false;
 			}
+
 		}
+
 		return true;
 	}
 	/**

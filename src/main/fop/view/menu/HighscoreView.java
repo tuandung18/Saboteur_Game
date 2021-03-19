@@ -11,6 +11,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 public class HighscoreView extends MenuView {
     public HighscoreView(MainFrame window) {
@@ -55,11 +56,11 @@ public class HighscoreView extends MenuView {
         // Columns: Date time, name, scores
         String [][] columns = new String [rows.length][3];
         // Fill each row with data from columns
-        for(int line = 0; line < rows.length ; line++){
+        IntStream.range(0, rows.length).forEach(line -> {
             columns[line][0] = rows[line].getDateTime().format(dateTimeFormatter).toString();
             columns[line][1] = rows[line].getName();
             columns[line][2] = String.valueOf(rows[line].getScore());
-        }
+        });
         JTable scoreTable = new JTable(columns, title);
         JScrollPane scrollPane = new JScrollPane(scoreTable);
         JTableHeader theader = scoreTable.getTableHeader();

@@ -3,6 +3,7 @@ package fop.io;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import fop.model.ScoreEntry;
 
@@ -75,9 +76,7 @@ public final class ScoreEntryIO {
 			exp.printStackTrace();
 		}
 		printed = new PrintWriter(fileOutputStream);
-		for(ScoreEntry scoreEntry: scoreEntries){
-			scoreEntry.write(printed);
-		}
+		scoreEntries.forEach(scoreEntry -> scoreEntry.write(printed));
 		printed.close();
 	}
 	
@@ -113,9 +112,7 @@ public final class ScoreEntryIO {
 		// add the new high score to the sorted list
 		sortedList.add(scoreEntry);
 		// continue to add from the next index from list of high scores
-		for(int i = nextIndex; i<listOfHighScores.size();i++){
-			sortedList.add(listOfHighScores.get(i));
-		}
+		IntStream.range(nextIndex, listOfHighScores.size()).mapToObj(listOfHighScores::get).forEach(sortedList::add);
 
 		writeScoreEntries(sortedList);
 	}
