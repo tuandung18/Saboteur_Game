@@ -156,6 +156,10 @@ public class Gameboard {
 	 */
 	private boolean isPositionEmpty(int x, int y) {
 		// TODO Aufgabe 4.1.6
+		Position pos = new Position(x, y);
+		if(board.containsKey(pos)) {
+			return false;
+		}
 		return true;
 	}
 	
@@ -167,9 +171,31 @@ public class Gameboard {
 	 */
 	private boolean existsPathFromStartCard(int x, int y) {
 		// TODO Aufgabe 4.1.7
-		
-		// die folgende Zeile entfernen und durch den korrekten Wert ersetzen
-		return board.computeIfAbsent(CardAnchor.left.getAdjacentPosition(Position.of(x + 1, y)), p -> null) == null;
+		try {
+
+			for (Entry<Position, PathCard> startCard : board.entrySet().stream().filter(e -> e.getValue().isStartCard()).collect(Collectors.toList())) {
+				for (CardAnchor cardAnchorInPos : CardAnchor.values()) {
+					Position pos = cardAnchorInPos.getAdjacentPosition(new Position(x, y));
+					if (isPositionEmpty(pos.x(), pos.y()))
+						continue;
+					CardAnchor oppositeAnchor = cardAnchorInPos.getOppositeAnchor();
+					BoardAnchor boardAnchorInPos = BoardAnchor.of(pos, oppositeAnchor);
+					Set<CardAnchor> startCardAnchors = startCard.getValue().getGraph().vertices();
+					for (CardAnchor cardAnchorFromStartCard : startCardAnchors) {
+						Position startCardPos = startCard.getKey();
+						BoardAnchor boardAnchorFromStartBoard = BoardAnchor.of(startCardPos, cardAnchorFromStartCard);
+						if (graph.hasPath(boardAnchorFromStartBoard, boardAnchorInPos))
+							return true;
+					}
+				}
+			}
+
+		}
+		catch (IllegalStateException exp){
+			exp.printStackTrace();
+		}
+
+		return false;
 	}
 	
 	/**
@@ -181,9 +207,15 @@ public class Gameboard {
 	 */
 	private boolean doesCardMatchItsNeighbors(int x, int y, PathCard card) {
 		// TODO Aufgabe 4.1.8
+		Position pos = Position.of(x, y);
+		for (CardAnchor ca : card.getGraph().vertices()) {
+			Position p = ca.getAdjacentPosition(pos);
+			if (!board.get(p).getGraph().vertices().contains(ca.getOppositeAnchor())) {
+				return false;
+			}
+		}
 		return true;
 	}
-	
 	/**
 	 * Gibt genau dann {@code true} zurück, wenn eine aufgedeckte Goldkarte im Wegelabyrinth liegt.
 	 * @return {@code true} wenn eine Goldkarte aufgedeckt ist; sonst {@code false}
