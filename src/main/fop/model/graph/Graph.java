@@ -35,6 +35,8 @@ public class Graph<V> {
 	 */
 	public void addVertex(V v) {
 		// TODO Aufgabe 4.1.1
+		if (!G.containsKey(v))
+			G.put(v, new HashSet<V>());
 	}
 	
 	/**
@@ -46,7 +48,13 @@ public class Graph<V> {
 	 */
 	public boolean addEdge(V x, V y) {
 		// TODO Aufgabe 4.1.1
-		return false;
+		if (hasEdge(x, y))
+			return false;
+		if (!G.containsKey(x))
+			G.put(x, new HashSet<>());
+		if (!G.containsKey(y))
+			G.put(y, new HashSet<>());
+		return (G.get(x).add(y) && G.get(y).add(x));
 	}
 	
 	
@@ -60,6 +68,12 @@ public class Graph<V> {
 	 */
 	public boolean removeVertex(V v) {
 		// TODO Aufgabe 4.1.1
+		if (hasVertex(v)) {
+			for (V e : G.get(v))
+				removeEdge(v, e);
+			G.remove(v);
+			return true;
+		}
 		return false;
 	}
 	
@@ -72,6 +86,11 @@ public class Graph<V> {
 	 */
 	public boolean removeEdge(V x, V y) {
 		// TODO Aufgabe 4.1.1
+		if (hasEdge(x, y)) {
+			G.get(x).remove(y);
+			G.get(y).remove(x);
+			return true;
+		}
 		return false;
 	}
 	
@@ -104,7 +123,21 @@ public class Graph<V> {
 	 * @return {@code true} wenn ein Pfad existiert; sonst {@code false}
 	 */
 	public boolean hasPath(V x, V y) {
-		// TODO Aufgabe 4.1.2
+		return hasPath(x, y, new HashSet<>());
+	}
+
+	public boolean hasPath(V x, V y, HashSet<V> alreadyVisited) {
+		if (alreadyVisited.contains(x))
+			return false;
+		alreadyVisited.add(x);
+		if (hasVertex(x) && hasVertex(y)) {
+			if (x == y)
+				return true;
+			if (getAdjacentVertices(x).contains(y))
+				return true;
+			for (V v : getAdjacentVertices(x))
+				return hasPath(v, y, alreadyVisited);
+		}
 		return false;
 	}
 	
