@@ -210,10 +210,11 @@ public class Gameboard {
 		for (CardAnchor ca : CardAnchor.values()) {
 			Position nextpos = ca.getAdjacentPosition(pos);
 			// skip if no card or goal card is in next position
-			if (!isPositionEmpty(nextpos.x(), nextpos.y()) && !board.get(nextpos).isGoalCard()) {
-				if ((card.getGraph().hasVertex(ca) || !graph.hasVertex(BoardAnchor.of(nextpos, ca.getOppositeAnchor()))) && (!card.getGraph().hasVertex(ca) || graph.hasVertex(BoardAnchor.of(nextpos, ca.getOppositeAnchor()))))
-					return false;
+			if (isPositionEmpty(nextpos.x(), nextpos.y()) || board.get(nextpos).isGoalCard()) {
+				continue;
 			}
+			if ((card.getGraph().hasVertex(ca) || !graph.hasVertex(BoardAnchor.of(nextpos, ca.getOppositeAnchor()))) && (!card.getGraph().hasVertex(ca) || graph.hasVertex(BoardAnchor.of(nextpos, ca.getOppositeAnchor()))))
+				return false;
 
 		}
 
