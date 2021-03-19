@@ -48,15 +48,19 @@ public class HighscoreView extends MenuView {
             "Name",
             "Scores",
         };
-        ScoreEntry[] scoreEntries = ScoreEntryIO.loadScoreEntries().toArray(new ScoreEntry[0]);
-        String [][] stats = new String [scoreEntries.length][3];
+        // Date time formatting
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy' 'HH:mm:ss");
-        for(int line = 0; line < scoreEntries.length ; line++){
-            stats[line][0] = scoreEntries[line].getDateTime().format(dateTimeFormatter).toString();
-            stats[line][1] = scoreEntries[line].getName();
-            stats[line][2] = String.valueOf(scoreEntries[line].getScore());
+        // Rows: Score entries
+        ScoreEntry[] rows = ScoreEntryIO.loadScoreEntries().toArray(new ScoreEntry[0]);
+        // Columns: Date time, name, scores
+        String [][] columns = new String [rows.length][3];
+        // Fill each row with data from columns
+        for(int line = 0; line < rows.length ; line++){
+            columns[line][0] = rows[line].getDateTime().format(dateTimeFormatter).toString();
+            columns[line][1] = rows[line].getName();
+            columns[line][2] = String.valueOf(rows[line].getScore());
         }
-        JTable scoreTable = new JTable(stats, title);
+        JTable scoreTable = new JTable(columns, title);
         JScrollPane scrollPane = new JScrollPane(scoreTable);
         JTableHeader theader = scoreTable.getTableHeader();
         theader.setBackground(this.getBackground());

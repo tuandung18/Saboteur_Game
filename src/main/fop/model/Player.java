@@ -41,6 +41,8 @@ public class Player {
 	
 	public void scorePoints(int points) {
 		score += points;
+		if(score<0)
+			score=0;
 	}
 	
 	public void assignRole(Role role) {
@@ -189,7 +191,7 @@ public class Player {
 	 * Alle möglichen Rollen für Spieler.
 	 */
 	public enum Role {
-		GOLD_MINER, SABOTEUR;
+		GOLD_MINER, SABOTEUR, STONE_MINER;
 	}
 	
 }

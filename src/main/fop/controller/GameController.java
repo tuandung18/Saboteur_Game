@@ -235,17 +235,24 @@ public final class GameController {
 	 */
 	public static List<Player> getWinners() {
 		// TODO Aufgabe 4.3.2
+
 		// Sie dürfen diese Methode vollständig umschreiben und den vorhandenen Code entfernen.
-		
+		// Steinkarte wurde aufgedeckt -> Steinsucher gewinnen
+		if(gameboard.isStoneCardVisible() && players.stream().filter(p -> p.getRole() == Player.Role.STONE_MINER).findAny().isPresent())
+			return players.stream().filter(p -> p.getRole() == Player.Role.STONE_MINER).collect(Collectors.toList());
 		// Goldkarte wurde aufgedeckt -> Goldsucher gewinnen
-		if (gameboard.isGoldCardVisible())
+		if (gameboard.isGoldCardVisible() && players.stream().filter(p -> p.getRole() == Player.Role.GOLD_MINER).findAny().isPresent())
 			return players.stream().filter(p -> p.getRole() == Player.Role.GOLD_MINER).collect(Collectors.toList());
-		
+
 		// keine Karten mehr übrig -> Saboteure gewinnen
-		if (drawDeck.isEmpty() && players.stream().allMatch(p -> p.getAllHandCards().isEmpty()))
+		if (drawDeck.isEmpty() && players.stream().allMatch(p -> p.getAllHandCards().isEmpty()) && players.stream().filter(p -> p.getRole() == Player.Role.SABOTEUR).findAny().isPresent())
 			return players.stream().filter(p -> p.getRole() == Player.Role.SABOTEUR).collect(Collectors.toList());
-		
-		// noch kein Gewinner
+		if (drawDeck.isEmpty() && players.stream().allMatch(p -> p.getAllHandCards().isEmpty()) && !players.stream().filter(p -> p.getRole() == Player.Role.SABOTEUR).findAny().isPresent()) {
+			int highestScore = players.stream().mapToInt(p -> p.getScore()).max().getAsInt();
+			List<Player> playerWithHighhestScore = players.stream().filter(p -> p.getScore() == highestScore).collect(Collectors.toList());
+			return playerWithHighhestScore;
+		}
+			// noch kein Gewinner
 		return null;
 	}
 	
@@ -257,9 +264,10 @@ public final class GameController {
 		// Spielende prüfen
 		List<Player> winners = getWinners();
 		if (winners != null) {
-			// Siegpunkte verteilen
-			for (Player player : winners)
-				player.scorePoints(20);
+			// Bonus Punkte von restlichen Karten
+			for (Player player : winners) {
+				player.scorePoints(30);
+			}
 			// Highscores speichern
 			LocalDateTime now = LocalDateTime.now();
 			for (Player player : players) {
@@ -395,6 +403,8 @@ public final class GameController {
 		discardPile.add(selectedCard);
 		playSelectedCard();
 		scorePoints(2);
+		if(player.hasBrokenTool())
+			scorePoints(5);
 		nextPlayer();
 	}
 	
@@ -404,6 +414,8 @@ public final class GameController {
 	 * @param player der Spieler, dessen Werkzeug zerstört wird
 	 */
 	public static void breakToolWithSelectedCard(Player player) {
+		if(player.hasBrokenTool())
+			scorePoints(-1);
 		player.breakTool((BrokenToolCard) selectedCard);
 		playSelectedCard();
 		scorePoints(2);
@@ -417,6 +429,8 @@ public final class GameController {
 	 * @param goalCard die anzuschauende Zielkarte
 	 */
 	public static void lookAtGoalCardWithSelectedCard(GoalCard goalCard) {
+		if(selectedCard.isMap())
+			scorePoints(-10);
 		firePropertyChange(LOOK_AT_GOAL_CARD, goalCard);
 		discardPile.add(selectedCard);
 		playSelectedCard();

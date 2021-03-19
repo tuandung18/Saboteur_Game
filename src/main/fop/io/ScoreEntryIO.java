@@ -71,11 +71,8 @@ public final class ScoreEntryIO {
 		FileOutputStream fileOutputStream = null;
 		try {
 			fileOutputStream = new FileOutputStream(PATH);
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException exp) {
+			exp.printStackTrace();
 		}
 		printed = new PrintWriter(fileOutputStream);
 		for(ScoreEntry scoreEntry: scoreEntries){
@@ -101,9 +98,9 @@ public final class ScoreEntryIO {
 		}
 		// create a list to save the sorted high scores which is greater
 		// or equal than the to-be-added score
-		List<ScoreEntry> sortedList = new ArrayList<>();
 		// next index in list of high scores, used to add scores smaller than the to-be-added score
 		int nextIndex = 0;
+		List<ScoreEntry> sortedList = new ArrayList<>();
 		for(ScoreEntry highScore : listOfHighScores){
 			if(highScore.compareTo(scoreEntry)>=0){
 				sortedList.add(highScore);

@@ -191,7 +191,13 @@ public class Gameboard {
 	public boolean isGoldCardVisible() {
 		return board.values().stream().anyMatch(c -> c.isGoalCard() && ((GoalCard) c).getType() == GoalCard.Type.Gold && !((GoalCard) c).isCovered());
 	}
-	
+	/**
+	 * Gibt genau dann {@code true} zurück, wenn eine aufgedeckte Steinkarte im Wegelabyrinth liegt.
+	 * @return {@code true} wenn eine Steinkarte aufgedeckt ist; sonst {@code false}
+	 */
+	public boolean isStoneCardVisible(){
+		return board.values().stream().anyMatch(c -> c.isGoalCard() && ((GoalCard) c).getType() == GoalCard.Type.Stone && !((GoalCard) c).isCovered());
+	}
 	
 	// get //
 	
